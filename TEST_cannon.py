@@ -9,7 +9,7 @@ from rk4_cannon import *
 x0 = 0
 y0 = 0
 
-v0 = 9.0
+v0 = 9.8
 th0 = (math.pi / 180) * 45
 
 c = 0.4
