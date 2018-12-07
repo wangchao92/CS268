@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import math
 from cannonDynamics import *
 from utils import *
+from rk4_cannon import *
 
 x0 = 0
 y0 = 0
@@ -23,12 +24,12 @@ time = np.linspace(0, 10, 100)
 
 z0 = np.array([x0, y0, dx0, dy0])
 
-sol = odeint(cannonDynamics, z0, time, args=(c,))
+sol = rk4_cannon(time, z0, c)
 
 idx = findGround(sol[:, 1])
 
 tspan = np.linspace(0, time[idx], 100)
-z = odeint(cannonDynamics, z0, tspan, args=(c,))
+z = rk4_cannon(tspan, z0, c)
 
 plt.figure()
 plt.axis('equal')
