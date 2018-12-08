@@ -10,7 +10,7 @@ x0 = 0
 y0 = 0
 
 v0 = 9.8
-th0 = (math.pi / 180) * 45
+th0 = (math.pi / 180) * 80
 
 c = 0.4
 
@@ -22,11 +22,11 @@ if dy0 < 0:
 
 time = np.linspace(0, 10, 100)
 
-z0 = np.array([x0, y0, dx0, dy0])
+z0 = np.array([x0, y0, dx0, dy0]).reshape((4,1))
 
 sol = rk4_cannon(time, z0, c)
 
-idx = findGround(sol[:, 1])
+idx = findGround(sol[1,:])
 
 tspan = np.linspace(0, time[idx], 100)
 z = rk4_cannon(tspan, z0, c)
@@ -35,6 +35,6 @@ plt.figure()
 plt.axis('equal')
 groundX = np.linspace(-1, 9, 100)
 groundY = np.linspace(0, 0, 100)
-plt.plot(z[:, 0], z[:, 1])
+plt.plot(z[0,:], z[1,:])
 plt.plot(groundX, groundY, color = 'tomato', linewidth = 4.0)
 plt.show()

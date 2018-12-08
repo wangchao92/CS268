@@ -1,28 +1,32 @@
 import math
 from singleShooting import *
+from multipleShooting import *
 from utils import *
 from rk4_cannon import *
 import matplotlib.pyplot as plt
 
 def main():
 	guess = {
-		'initSpeed' : 9.0,
+		'initSpeed' : 8.0,
 		'initAngle' : (math.pi / 180) * 45
 	}
 
 	target = {
-		'x' : 7.0,
+		'x' : 6.0,
 		'y' : 0.0
 	}
 
 	param = {
 		'c' : 0.4,
-		'nGrid' : 100
+		'nGrid' : 100,
+		'nSegment' : 10,
+		'nSubStep' : 5
 	}
 
 	soln = {}
 	soln['singleShooting_cons_SLSQP'] = cannon_singleShooting_cons(guess, target, param)
 	soln['singleShooting_uncons_NM'] = cannon_singleShooting_uncons(guess, target, param)
+	soln['multipleShooting'] = cannon_multipleShooting(guess, target, param)
 	
 	print '--------------------------------------'
 	result_dx = []
@@ -45,18 +49,19 @@ def main():
 def plotResult(methods, result_dx, result_dy, result_speed, param, target):
 	plt.figure()
 	time = np.linspace(0, 10, 100)
-
+	if len(result_dx) == 0:
+		return
 	for i in range(len(result_dx)):
 		dx0 = result_dx[i]
 		dy0 = result_dy[i]
 		speed = result_speed[i]
 		x0 = 0.0
 		y0 = 0.0
-		z0 = np.array([x0, y0, dx0, dy0])
+		z0 = np.array([x0, y0, dx0, dy0]).reshape((4,1))
 
 		sol = rk4_cannon(time, z0, param['c'])
 
-		idx = findGround(sol[:, 1])
+		idx = findGround(sol[1, :])
 
 		tspan = np.linspace(0, time[idx], 100)
 		z = rk4_cannon(tspan, z0, param['c'])
@@ -64,7 +69,7 @@ def plotResult(methods, result_dx, result_dy, result_speed, param, target):
 		plt.axis('equal')
 		groundX = np.linspace(-1, 9, 100)
 		groundY = np.linspace(0, 0, 100)
-		plt.plot(z[:, 0], z[:, 1], label=methods[i]+':v=%.2f' % (result_speed[i]), linewidth=2)
+		plt.plot(z[0,:], z[1,:], label=methods[i]+':v=%.2f' % (result_speed[i]), linewidth=2)
 	plt.plot(groundX, groundY, color='brown', linewidth=4)
 	plt.plot((0), (0), 'o', color='black', markersize=10)
 	plt.plot((target['x']), (target['y']), 'x', color='r', markersize=10, markeredgewidth=2, label='target')

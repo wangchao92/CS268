@@ -1,6 +1,7 @@
 from simulateCannon import *
 from scipy.optimize import minimize
 from cannonDynamics import *
+from rk4_cannon import *
 
 def cannon_singleShooting_cons(guess, target, param):
 	init = {
@@ -33,16 +34,16 @@ def nonLinCst(x, target, P):
 
 	nGrid = P['nGrid']
 	t = np.linspace(0, 10, nGrid)
-	z0 = np.array([x0, y0, dx0, dy0])
+	z0 = np.array([x0, y0, dx0, dy0]).reshape((4,1))
 
-	sol = odeint(cannonDynamics, z0, t, args=(P['c'],))
+	sol = rk4_cannon(t, z0, P['c'])
 
-	idx = findGround(sol[:, 1])
+	idx = findGround(sol[1,:])
 
 	t = np.linspace(0, t[idx], nGrid)
-	z = odeint(cannonDynamics, z0, t, args=(P['c'],))
+	z = rk4_cannon(t, z0, P['c'])
 
-	dist = z[-1, 0] - target['x'] + z[-1, 1] - target['y']
+	dist = z[0, -1] - target['x'] + z[1, -1] - target['y']
 
 	return dist
 
