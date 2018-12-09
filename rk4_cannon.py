@@ -20,7 +20,7 @@ def rk4_cannon(t, z0, c):
 		z[:,:,0] = z0
 		for i in range(nTime - 1):
 			dt = t[i + 1] - t[i]
-			k1 = cannonDynamics(z[:,:,0], t[i], c)
+			k1 = cannonDynamics(z[:,:,i], t[i], c)
 			k2 = cannonDynamics(z[:,:,i] + 0.5 * dt * k1, t[i] + 0.5 * dt, c)
 			k3 = cannonDynamics(z[:,:,i] + 0.5 * dt * k2, t[i] + 0.5 * dt, c)
 			k4 = cannonDynamics(z[:,:,i] + dt * k3, t[i] + dt, c)

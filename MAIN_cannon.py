@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 def main():
 	guess = {
-		'initSpeed' : 8.0,
+		'initSpeed' : 9.0,
 		'initAngle' : (math.pi / 180) * 45
 	}
 
@@ -26,7 +26,8 @@ def main():
 	soln = {}
 	soln['singleShooting_cons_SLSQP'] = cannon_singleShooting_cons(guess, target, param)
 	soln['singleShooting_uncons_NM'] = cannon_singleShooting_uncons(guess, target, param)
-	soln['multipleShooting'] = cannon_multipleShooting(guess, target, param)
+	soln['multipleShooting_cons_SLSQP'] = cannon_multipleShooting(guess, target, param)
+	soln['multipleShooting_uncon_NM'] = cannon_multipleShooting_uncon(guess, target, param)
 	
 	print '--------------------------------------'
 	result_dx = []
@@ -34,10 +35,10 @@ def main():
 	result_speed = []
 	methods = []
 	for key in soln:
-		if soln[key].success:
-			dx = soln[key].x[0]
-			dy = soln[key].x[1]
-			speed = math.sqrt(soln[key].x[0]**2 + soln[key].x[1]**2)
+		if soln[key]['success']:
+			dx = soln[key]['dx']
+			dy = soln[key]['dy']
+			speed = math.sqrt(dx**2 + dy**2)
 			print key + ':'
 			print 'dx: %f, dy: %f, speed: %f\n' % (dx, dy, speed)
 			result_dx.append(dx)
@@ -74,7 +75,7 @@ def plotResult(methods, result_dx, result_dy, result_speed, param, target):
 	plt.plot((0), (0), 'o', color='black', markersize=10)
 	plt.plot((target['x']), (target['y']), 'x', color='r', markersize=10, markeredgewidth=2, label='target')
 	plt.legend(loc='upper right')
-	plt.title('Single Shooting Method')
+	plt.title('Single/Mulitple Shooting Method')
 	plt.show()
 
 if __name__ == '__main__':
