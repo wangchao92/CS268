@@ -4,6 +4,33 @@ from cannonDynamics import *
 import numpy as np
 from scipy.interpolate import interp1d
 from rk4_cannon import *
+import matplotlib.pyplot as plt
+
+def plot_cb(x):
+    time = x[0] / 10
+    for i in range(10):
+        dx0 = x[4 * i + 3]
+        dy0 = x[4 * i + 4]
+        x0 = x[4 * i + 1]
+        y0 = x[4 * i + 2]
+        z0 = np.array([x0, y0, dx0, dy0]).reshape((4,1))
+
+        tspan = np.linspace(0, time, 100)
+        z = rk4_cannon(tspan, z0, 0.4)
+
+        plt.plot(z[0,:], z[1,:], linewidth=2)
+
+def plot_label():
+    plt.xlim(-1, 7)
+    plt.ylim(-1, 3)
+    plt.gca().set_aspect('equal', adjustable='box')
+    groundX = np.linspace(-1, 9, 100)
+    groundY = np.linspace(0, 0, 100)
+    plt.plot(groundX, groundY, color='brown', linewidth=4)
+    plt.plot((0), (0), 'o', color='black', markersize=10, label='cannon')
+    plt.plot((6.0), (0.0), 'x', color='r', markersize=10, markeredgewidth=2, label='target')
+    plt.legend(loc='upper right')
+    plt.title('Multiple Shooting Method')
 
 def cannon_multipleShooting(guess, target, params):
     init = {
@@ -33,7 +60,7 @@ def cannon_multipleShooting(guess, target, params):
     
     eq_cons = {'type': 'eq', 'fun': nonLinCst, 'args': (target, P)}
     sol = minimize(objective, x0, method='SLSQP', constraints=[eq_cons], options={'disp': True})
-
+    
     return {'dx': sol.x[3], 'dy': sol.x[4], 'success': sol.success}
 
 def nonLinCst(x, target, P):

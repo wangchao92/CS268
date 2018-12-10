@@ -4,6 +4,7 @@ from multipleShooting import *
 from utils import *
 from rk4_cannon import *
 import matplotlib.pyplot as plt
+import random
 
 def main():
 	guess = {
@@ -23,6 +24,19 @@ def main():
 		'nSubStep' : 5
 	}
 
+	# opt = 9.845
+	# error = []
+	# num_iter = []
+	# num_fev = []
+	# for i in range(10):
+	# 	guess['initSpeed'] = random.uniform(7.0, 13.0)
+	# 	print guess
+	# 	sol = cannon_multipleShooting_uncon(guess, target, param)
+	# 	error.append(abs(opt - math.sqrt(sol['dx']**2 + sol['dy']**2)))
+	# 	num_iter.append(sol['iter'])
+	# 	num_fev.append(sol['fev'])
+
+	# print np.mean(error), np.std(error), np.mean(num_iter), np.std(num_iter), np.mean(num_fev), np.std(num_fev)
 	soln = {}
 	soln['singleShooting_cons_SLSQP'] = cannon_singleShooting_cons(guess, target, param)
 	soln['singleShooting_uncons_NM'] = cannon_singleShooting_uncons(guess, target, param)
@@ -67,15 +81,17 @@ def plotResult(methods, result_dx, result_dy, result_speed, param, target):
 		tspan = np.linspace(0, time[idx], 100)
 		z = rk4_cannon(tspan, z0, param['c'])
 
-		plt.axis('equal')
 		groundX = np.linspace(-1, 9, 100)
 		groundY = np.linspace(0, 0, 100)
 		plt.plot(z[0,:], z[1,:], label=methods[i]+':v=%.2f' % (result_speed[i]), linewidth=2)
+	plt.xlim(-1, 7)
+	plt.ylim(-1, 3)
+	plt.gca().set_aspect('equal', adjustable='box')
 	plt.plot(groundX, groundY, color='brown', linewidth=4)
 	plt.plot((0), (0), 'o', color='black', markersize=10)
 	plt.plot((target['x']), (target['y']), 'x', color='r', markersize=10, markeredgewidth=2, label='target')
 	plt.legend(loc='upper right')
-	plt.title('Single/Mulitple Shooting Method')
+	plt.title('Optimization Results')
 	plt.show()
 
 if __name__ == '__main__':
