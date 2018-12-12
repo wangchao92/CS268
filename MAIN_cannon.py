@@ -49,7 +49,7 @@ def main():
 	result_speed = []
 	methods = []
 	for key in soln:
-		if soln[key]['success']:
+		if True:
 			dx = soln[key]['dx']
 			dy = soln[key]['dy']
 			speed = math.sqrt(dx**2 + dy**2)
